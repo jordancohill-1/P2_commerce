@@ -1,0 +1,23 @@
+{% extends "auctions/layout.html" %}
+{% block title %}
+    New Auction
+{% endblock %}
+{% block body %}
+
+  <div>
+<div style="text-align: center;">
+	<h1>Create New Entry</h1>
+	<br />
+</div>
+<form  method="post">
+	<div style="text-align: right;">
+	</div>
+    {% csrf_token %}
+    <table style=" width: 100%;">
+	{{ form }}
+</table>
+	<input type="submit" class="submit">
+</form>
+
+</div>
+{% endblock %}
