@@ -7,31 +7,86 @@
 
   <div>
 <div style="text-align: center;">
-	<h1>{{item.title}}</h1>
-	<p>{{item.description}}</p>
-	<img src="{{ item.image }}" alt=" " width="200" height="200">
-	<p>{{item.starting_bid}}</p>
-	<p>{{item.date_listed}}</p>
-	<p>{{currentBid}}</p>
-{% if user.is_authenticated %}
-	<form method="post" action="{% url 'watchlist' item.id on_watchlist %}">
-		{% csrf_token %}
-		{% if on_watchlist %}
-		<input type="submit" value="Remove from Watchlist">
-		{% else %}
-		<input type="submit" value="Add to Watchlist">
-		{% endif %}
+	{% if winner %}<h1 style="color: blue">You Won This Auction!</h1>{% endif %}
+	 <h2 style="text-align: left;">Listing: {{item.title}}</h2>
 
-	</form>	
+	<div class="container border">
+		<br />
+        <div class="row">
+            <div class="col-4">
+			<img src="{{ item.image }}" alt=" " width="400" height="400">
+		</div>
+		<div class="col">
+			<br />
+			<p>{{item.description}}</p>
+			
+			<p>Starting Price: ${{item.starting_bid}}</p>
+			<p>{% if item.category %}{{item.category}}{% endif %}</p>
+			<p>Created {{item.date_listed}}</p>
+			<p>Current Price: ${{item.current_price}}</p>
+		</div>
+		<div style="margin-top:-25px">
+			{% if user.is_authenticated %}
+			<form method="post" action="{% url 'watchlist' item.id on_watchlist %}" >
+				{% csrf_token %}
+				{% if on_watchlist %}
+				<input type="submit" class="btn btn-light" value="Remove from Watchlist" {% if not item.active %}disabled{%endif%}>
+				{% else %}
+				<input type="submit" class="btn btn-light" value="Add to Watchlist" {% if not item.active %}disabled{%endif%}>
+				{% endif %}
+
+			</form>	
+			{% if is_creator %}
+			<form method="post" action="{% url 'close' item.id %}">
+				{% csrf_token %}
+					<input type="submit" class="btn btn-danger"value="close auction">
+			</form>	
+			{% endif %}
+			{% endif %}
+
+		</div>
+	</div>
+
+	
+
+</div>
+
+
+{% if user.is_authenticated %}
+
 	<form method="post" action="{% url 'bid' item.id %}">
 		{% csrf_token %}
+		<div>
+			<br />
+		<input type="number" placeholder="Bid" style="width:93%"  name="value" {% if not item.active %}disabled{%endif%}>	
 
-		$<input type="number" name="value">
-	
-		<input type="submit" value="$Bid$">
-
-
+		
+		<div style="text-align: left; margin-left: 4%">
+			<br />
+		<input type="submit" class="btn btn-primary" value="Place Bid" {% if not item.active %}disabled{%endif%}>
+	</div>
+</div>
 	</form>	
+	<fieldset class="border" >
+		<legend style="text-align: left;">Comments</legend>
+		{% if comments %} 
+		{% for comment in comments %}
+			<div> {{comment.commenter}} says:</div>
+			<div style=" background: lightgray;">{{comment}}</div>
+			<br />
+		{% endfor %}
+		{% endif %}
+
+	</fieldset>
+	<br />
+		<form method="post" action="{% url 'comment' item.id %}">
+			{% csrf_token %}
+			<div style="width: 80%;">
+			{{ form }}
+			<input type="submit"  class="btn btn-primary" value="post">
+		</div>
+	</form>	
+
 {% endif %}
 
 </div>
