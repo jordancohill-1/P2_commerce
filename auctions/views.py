@@ -133,7 +133,6 @@ def item(request, item_id):
     item = getItem(item_id)
     disable = not item.active
     comments = Comments.objects.filter(item = item).all()
-    print(disable)
     if request.user.is_authenticated:
         user = currentUser(request)
         on_watchlist = Watchlist.objects.filter(watcher = user.id, item = item_id).exists();
